@@ -1,0 +1,52 @@
+MASTER_NAME = mydoc
+MASTER = $(MASTER_NAME).tex
+
+LATEX=latex
+BIBTEX=bibtex
+DVIPS=dvips
+PS2PDF=ps2pdf
+RM_F=rm -f
+TAR=tar
+
+LATEX_FLAGS =
+DVIPS_FLAGS = -Ppdf
+
+BIB_FILE = mybibfile.bib
+
+ALL_SOURCES = $(MASTER) $(BIB_FILE)
+
+GENERATED_DVI = $(MASTER_NAME).dvi
+GENERATED_PS = $(MASTER_NAME).ps
+GENERATED_PDF = $(MASTER_NAME).pdf
+
+.PHONY : all clean tarball
+
+all: $(GENERATED_PDF)
+
+$(GENERATED_PDF) : $(GENERATED_PS)
+	$(PS2PDF) $(GENERATED_PS) $(GENERATED_PDF)
+
+$(GENERATED_PS) : $(GENERATED_DVI)
+	$(DVIPS) $(DVIPS_FLAGS) $(GENERATED_DVI) -o $(GENERATED_PS)
+
+$(GENERATED_DVI) : $(ALL_SOURCES)
+	$(LATEX) $(LATEX_FLAGS) $(MASTER)
+	$(BIBTEX) $(MASTER_NAME)
+	$(LATEX) $(LATEX_FLAGS) $(MASTER)
+	$(LATEX) $(LATEX_FLAGS) $(MASTER)
+
+clean:
+	$(RM_F) $(GENERATED_PDF)\
+	  $(GENERATED_PS)\
+	  $(GENERATED_DVI)\
+	  $(MASTER_NAME).aux\
+	  $(MASTER_NAME).log\
+	  $(MASTER_NAME).bbl\
+	  $(MASTER_NAME).blg\
+	  $(MASTER_NAME).out\
+	  $(MASTER_NAME).toc
+
+TARNAME=$(MASTER_NAME)-$(shell date +"%Y-%m-%d").tar
+
+tarball :
+	$(TAR) -cf $(TARNAME) $(MASTER) Makefile
