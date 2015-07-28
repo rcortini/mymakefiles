@@ -1,0 +1,64 @@
+# sources
+MASTER_NAME = mydoc
+MASTER = $(MASTER_NAME).tex
+SYM_LINK = $(MASTER_NAME).pdf
+BIB_FILE = mybib.bib
+
+# directories
+SOURCE_DIR = sources
+FIGURES_DIR = figures
+OUT_DIR = output
+
+# tex files and figure files
+TEX_FILES = $(SOURCE_DIR)/foo1.tex $(SOURCE_DIR)/foo2.tex
+FIGURES = $(FIGURES_DIR)/bar1.eps $(FIGURES_DIR)/bar1.eps
+
+# programs
+LATEX=latex
+BIBTEX=bibtex
+DVIPS=dvips
+PS2PDF=ps2pdf
+RM_F=rm -rf
+TAR=tar
+LN_S=ln -sf
+
+LATEX_FLAGS = -output-directory=$(OUT_DIR)/
+DVIPS_FLAGS = -Ppdf
+
+ALL_SOURCES = $(SOURCE_DIR)/$(MASTER) $(TEX_FILES) $(FIGURES)
+
+GENERATED_DVI = $(OUT_DIR)/$(MASTER_NAME).dvi
+GENERATED_PS = $(OUT_DIR)/$(MASTER_NAME).ps
+GENERATED_PDF = $(OUT_DIR)/$(MASTER_NAME).pdf
+
+.PHONY : all clean tarball
+
+all: $(GENERATED_PDF)
+
+$(GENERATED_PDF) : $(GENERATED_PS)
+	$(PS2PDF) $(GENERATED_PS) $(GENERATED_PDF)
+	$(LN_S) $(GENERATED_PDF) $(SYM_LINK)
+
+$(GENERATED_PS) : $(GENERATED_DVI)
+	$(DVIPS) $(DVIPS_FLAGS) $(GENERATED_DVI) -o $(GENERATED_PS)
+
+$(GENERATED_DVI) : $(ALL_SOURCES) $(OUT_DIR)
+	$(LATEX) $(LATEX_FLAGS) $(SOURCE_DIR)/$(MASTER)
+	$(BIBTEX) $(basename $(OUT_DIR)/$(MASTER))
+	$(LATEX) $(LATEX_FLAGS) $(SOURCE_DIR)/$(MASTER)
+	$(LATEX) $(LATEX_FLAGS) $(SOURCE_DIR)/$(MASTER)
+
+$(OUT_DIR) :
+	mkdir $(OUT_DIR)
+
+clean:
+	$(RM_F) $(GENERATED_PDF)\
+	  $(GENERATED_PS)\
+	  $(GENERATED_DVI)\
+	  $(SYM_LINK)\
+	  $(OUT_DIR)
+
+TARNAME=$(MASTER_NAME)-$(shell date +"%Y-%m-%d").tar
+
+tarball :
+	$(TAR) $(TARNAME) $(TEX_FILES) Makefile
