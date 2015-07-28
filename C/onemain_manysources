@@ -1,0 +1,35 @@
+program=myprogram
+program_sources=foo1.c foo2.c foo3.c
+program_main=$(program).c
+program_objects=$(program_sources:.c=.o)
+program_dependencies=bar1.h bar2.h bar3.h
+
+# flags
+CFLAGS=-std=gnu99 -Wall -Wextra -Wshadow -g --pedantic -O0
+LDFLAGS=
+INCLUDES=
+
+# programs
+RM_F=rm -f
+TAR=tar
+CC=gcc
+
+# targets
+.PHONY: clean tarball
+
+all : $(program)
+
+$(program): $(program_objects) $(program_main) $(program_dependencies)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(program) $(program_main) $(program_objects) $(LDFLAGS)
+
+# object files
+%.o: %.c $(program_dependencies)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $<  -o $@
+
+# clean targets
+clean :
+	$(RM_F) $(program_objects) $(program)
+
+# tarball
+tarball :
+	$(TAR) -cf $(program).tar $(program_sources) $(program_main) $(program_dependencies) Makefile
