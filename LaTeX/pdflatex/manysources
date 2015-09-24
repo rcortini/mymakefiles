@@ -1,0 +1,48 @@
+# sources
+MASTER_NAME = mydoc
+MASTER = $(MASTER_NAME).tex
+SYM_LINK = $(MASTER_NAME).pdf
+BIB_FILE = mybib.bib
+
+# directories
+SOURCE_DIR = sources
+FIGURES_DIR = figures
+OUT_DIR = output
+
+# tex files and figure files
+TEX_FILES = $(SOURCE_DIR)/foo1.tex $(SOURCE_DIR)/foo2.tex
+FIGURES = $(FIGURES_DIR)/bar1.eps $(FIGURES_DIR)/bar1.eps
+TARNAME=$(MASTER_NAME)-$(shell date +"%Y-%m-%d").tar
+
+# programs
+PDFLATEX=pdflatex
+BIBTEX=bibtex
+TAR=tar -cf 
+
+PDFLATEX_FLAGS = -output-directory $(OUT_DIR)
+
+ALL_SOURCES = $(SOURCE_DIR)$(MASTER) $(TEX_FILES) $(FIGURE_FILES)
+
+GENERATED_PDF = $(OUT_DIR)$(MASTER_NAME).pdf
+
+.PHONY : all clean tarball
+
+$(GENERATED_PDF) : $(ALL_SOURCES) $(OUT_DIR)
+	$(PDFLATEX) $(PDFLATEX_FLAGS) $(SOURCE_DIR)$(MASTER)
+	$(BIBTEX) $(basename $(OUT_DIR)/$(MASTER))
+	$(PDFLATEX) $(PDFLATEX_FLAGS) $(SOURCE_DIR)$(MASTER)
+	$(PDFLATEX) $(PDFLATEX_FLAGS) $(SOURCE_DIR)$(MASTER)
+	ln -sf $(GENERATED_PDF) $(SYM_LINK)
+
+$(OUT_DIR) :
+	mkdir $(OUT_DIR)
+
+all: $(GENERATED_PDF)
+
+clean:
+	$(RM_F) $(GENERATED_PDF)\
+	  $(OUT_DIR)\
+	  $(SYM_LINK)
+
+tarball :
+	$(TAR) $(TARNAME) $(ALL_SOURCES) Makefile

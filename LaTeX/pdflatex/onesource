@@ -1,0 +1,36 @@
+# sources
+MASTER_NAME = 
+MASTER = $(MASTER_NAME).tex
+SYM_LINK = $(MASTER_NAME).pdf
+
+# figure files
+FIGURE_FILES = 
+TARNAME=$(MASTER_NAME)-$(shell date +"%Y-%m-%d").tar
+
+# programs
+PDFLATEX=pdflatex
+TAR = tar -cf 
+
+ALL_SOURCES = $(MASTER) $(FIGURE_FILES)
+
+GENERATED_PDF = $(MASTER_NAME).pdf
+
+.PHONY : all clean tarball
+
+$(GENERATED_PDF) : $(ALL_SOURCES)
+	$(PDFLATEX) $(MASTER)
+	$(BIBTEX) $(basename $(OUT_DIR)/$(MASTER))
+	$(PDFLATEX) $(MASTER)
+	$(PDFLATEX) $(MASTER)
+
+all: $(GENERATED_PDF) $(COMPLETE_PDF)
+
+clean:
+	$(RM_F) $(GENERATED_PDF)\
+	  $(MASTER_NAME).aux
+	  $(MASTER_NAME).bbl
+	  $(MASTER_NAME).blg
+	  $(MASTER_NAME).log
+
+tarball:
+	$(TAR) $(TARNAME) $(ALL_SOURCES) Makefile
