@@ -12,6 +12,7 @@ OUT_DIR = output
 # tex files and figure files
 TEX_FILES = $(SOURCE_DIR)/foo1.tex $(SOURCE_DIR)/foo2.tex
 FIGURES = $(FIGURES_DIR)/bar1.eps $(FIGURES_DIR)/bar1.eps
+TARNAME=$(MASTER_NAME)-$(shell date +"%Y-%m-%d").tar
 
 # programs
 LATEX=latex
@@ -58,7 +59,5 @@ clean:
 	  $(SYM_LINK)\
 	  $(OUT_DIR)
 
-TARNAME=$(MASTER_NAME)-$(shell date +"%Y-%m-%d").tar
-
 tarball :
-	$(TAR) $(TARNAME) $(TEX_FILES) Makefile
+	$(TAR) $(TARNAME) $(ALL_SOURCES) Makefile
