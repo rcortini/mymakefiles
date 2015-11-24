@@ -9,6 +9,8 @@ TARNAME=$(MASTER_NAME)-$(shell date +"%Y-%m-%d").tar
 
 # programs
 PDFLATEX=pdflatex
+BIBTEX=bibtex
+RM_F=rm -rf
 TAR = tar -cf 
 
 ALL_SOURCES = $(MASTER) $(FIGURE_FILES)
@@ -27,9 +29,9 @@ all: $(GENERATED_PDF) $(COMPLETE_PDF)
 
 clean:
 	$(RM_F) $(GENERATED_PDF)\
-	  $(MASTER_NAME).aux
-	  $(MASTER_NAME).bbl
-	  $(MASTER_NAME).blg
+	  $(MASTER_NAME).aux\
+	  $(MASTER_NAME).bbl\
+	  $(MASTER_NAME).blg\
 	  $(MASTER_NAME).log
 
 tarball:
